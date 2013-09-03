@@ -15,7 +15,7 @@ In your directory structure that has all of your programming assignments, clone 
     $ cd COMP590-001
     $ ls
     pa0 pa1
-    $ git clone git@github.com:Mokosha/COMP590Tests.git test
+    $ git clone https://github.com/Mokosha/COMP590Tests.git test
     $ ls
     pa0 pa1 test
     
