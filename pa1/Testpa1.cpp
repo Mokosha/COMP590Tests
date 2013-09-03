@@ -171,3 +171,24 @@ TEST(GContext, ClearBitmapWithAlpha) {
   delete ctx;
 }
 
+TEST(GContext, InvalidInputs) {
+  const int iw = -3;
+  const int vw = 3;
+
+  const int ih = -6;
+  const int vh = 6;
+
+  EXPECT_EQ(GContext::Create(iw, vh), static_cast<GContext *>(NULL));
+  EXPECT_EQ(GContext::Create(0, vh), static_cast<GContext *>(NULL));
+
+  EXPECT_EQ(GContext::Create(vw, ih), static_cast<GContext *>(NULL));
+  EXPECT_EQ(GContext::Create(vw, 0), static_cast<GContext *>(NULL));
+
+  EXPECT_EQ(GContext::Create(iw, ih), static_cast<GContext *>(NULL));
+  EXPECT_EQ(GContext::Create(0, 0), static_cast<GContext *>(NULL));
+
+  GBitmap ibm;
+  ibm.fPixels = NULL;
+
+  EXPECT_EQ(GContext::Create(ibm), static_cast<GContext *>(NULL));
+}
