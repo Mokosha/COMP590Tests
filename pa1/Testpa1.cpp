@@ -192,3 +192,80 @@ TEST(GContext, InvalidInputs) {
 
   EXPECT_EQ(GContext::Create(ibm), static_cast<GContext *>(NULL));
 }
+
+TEST(GContext, PersistentBitmap) {
+  const int w = 2;
+  const int h = 123;
+
+  GContext *ctx = GContext::Create(w, h);
+
+  GBitmap bm;
+  ctx->getBitmap(&bm);
+
+  GColor clr;
+  clr.fA = clr.fG = clr.fR = clr.fB = 1.0;
+  ctx->clear(clr);
+
+  EXPECT_EQ(bm.fWidth, w);
+  EXPECT_EQ(bm.fHeight, h);
+
+  for(int j = 0; j < h; j++) {
+    for(int i = 0; i < w; i++) {
+      EXPECT_EQ(bm.fPixels[j*w + i], 0xFFFFFFFF);
+    }
+  }
+
+  delete ctx;
+}
+
+TEST(GContext, OutOfRangeColors) {
+  const int w = 2;
+  const int h = 123;
+
+  GContext *ctx = GContext::Create(w, h);
+
+  GBitmap bm;
+  ctx->getBitmap(&bm);
+
+  GColor clr;
+  clr.fR = clr.fG = -3.2;
+  clr.fA = clr.fB = 4.0;
+  ctx->clear(clr);
+
+  EXPECT_EQ(bm.fWidth, w);
+  EXPECT_EQ(bm.fHeight, h);
+
+  for(int j = 0; j < h; j++) {
+    for(int i = 0; i < w; i++) {
+      EXPECT_EQ(bm.fPixels[j*w + i], 0xFF0000FF);
+    }
+  }
+
+  delete ctx;
+}
+
+TEST(GContext, CreateFromInvalidBitmap) {
+  GContext *ctx;
+
+  GBitmap bm;
+  bm.fWidth = 64;
+  bm.fHeight = 128;
+  const int nPixels = bm.fWidth * bm.fHeight;
+  bm.fPixels = new GPixel[nPixels];
+  bm.fRowBytes = 0;
+
+  ctx = GContext::Create(bm);
+  EXPECT_FALSE(ctx);
+
+  bm.fRowBytes = bm.fWidth * sizeof(GPixel) + 13;
+
+  ctx = GContext::Create(bm);
+  EXPECT_FALSE(ctx);
+
+  bm.fRowBytes = bm.fWidth * sizeof(GPixel);
+  delete bm.fPixels;
+  bm.fPixels = NULL;
+
+  ctx = GContext::Create(bm);
+  EXPECT_FALSE(ctx);
+}
