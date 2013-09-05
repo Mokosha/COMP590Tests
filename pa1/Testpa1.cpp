@@ -91,7 +91,7 @@ TEST(GContext, ClearBitmapWithSlop) {
   GBitmap bm;
   bm.fWidth = 640;
   bm.fHeight = 12;
-  bm.fRowBytes = bm.fWidth * sizeof(GPixel) + 14;
+  bm.fRowBytes = bm.fWidth * sizeof(GPixel) + 16;
   const int fPixelsSz = bm.fRowBytes * bm.fHeight;
   bm.fPixels = (GPixel *)malloc(fPixelsSz);
 
